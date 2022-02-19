@@ -1,0 +1,11 @@
+[tool.poetry]
+name = "archive-previewer"
+version = "1.0.0"
+description = ""
+authors = ["Tomas Dostal"]
+
+[tool.poetry.dependencies]
+python = "==3.10"
+flask = "==2.0.3"
+Flask-SQLAlchemy = "==2.5.1"
+jsonmerge="==1.8.0"
