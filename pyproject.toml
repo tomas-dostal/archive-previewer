@@ -8,4 +8,5 @@ authors = ["Tomas Dostal"]
 python = "==3.10"
 flask = "==2.0.3"
 Flask-SQLAlchemy = "==2.5.1"
-jsonmerge="==1.8.0"
+flask-marshmallow="==0.14.0"
+pytest=">=7.0.1"
