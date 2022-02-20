@@ -1,7 +1,8 @@
 import unittest
 
 
-class FileUploadTest(unittest.TestCase):
+class UploadedFileProcessingTest(unittest.TestCase):
+
     def test_no_zip_file_sent(self):
         self.assertEqual(True, False)  # add assertion here
 
