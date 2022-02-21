@@ -1,12 +1,10 @@
 import os
-import pdb
 from zipfile import ZipFile, BadZipFile
 
 from flask import request, jsonify, Flask
 from archive_previewer.database import db
 from archive_previewer.models import Archive, File
 from archive_previewer.schema import ArchiveSchema
-from archive_previewer import config
 
 UPLOAD_FOLDER = os.path.dirname(os.path.realpath(__file__))
 ALLOWED_EXTENSIONS = set("zip")

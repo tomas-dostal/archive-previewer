@@ -1,7 +1,4 @@
 import io
-
-import requests
-import pytest
 import unittest
 from archive_previewer.app import app
 
