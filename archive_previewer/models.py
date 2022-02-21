@@ -1,5 +1,5 @@
 import os
-from database import db
+from archive_previewer.database import db
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 

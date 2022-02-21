@@ -1,10 +1,12 @@
 import os
-from zipfile import ZipFile
+import pdb
+from zipfile import ZipFile, BadZipFile
 
 from flask import request, jsonify, Flask
-from database import db
-from models import Archive, File
-from schema import ArchiveSchema
+from archive_previewer.database import db
+from archive_previewer.models import Archive, File
+from archive_previewer.schema import ArchiveSchema
+from archive_previewer import config
 
 UPLOAD_FOLDER = os.path.dirname(os.path.realpath(__file__))
 ALLOWED_EXTENSIONS = set("zip")
@@ -13,9 +15,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///" + os.path.join(basedir, "data.sqlite"))
 
 app = Flask(__name__)
-app.config.from_object("config.DevelopmentConfig")  # os.environ.get('FLASK_ENV') or
-
-
+app.config.from_object("archive_previewer.config.DevelopmentConfig")  # os.environ.get('FLASK_ENV') or
 db.init_app(app)
 
 
@@ -26,16 +26,19 @@ def upload_file():
     if len(request.files) > 1:
         return jsonify(error=400, text="Multiple files attached. Please send separately"), 400
 
-    file = request.files.getlist("file")[0]
-    with ZipFile(file=file) as zip:
-        archive = Archive(name=file.filename)
-        content = [File(path=file.filename, size=file.file_size) for file in zip.filelist]
-        archive.files.extend(content)
-        db.session.add_all(content)
-        db.session.add(archive)
-        db.session.commit()
+    file = next(iter(request.files.listvalues()))[0]
+    archive = Archive(name=file.filename)
+    try:
+        with ZipFile(file=file) as zip:
+            content = [File(path=file.filename, size=file.file_size) for file in zip.filelist]
+            archive.files.extend(content)
+            db.session.add_all(content)
+            db.session.add(archive)
+            db.session.commit()
 
-        return ArchiveSchema().dump(archive)
+            return ArchiveSchema().dump(archive)
+    except BadZipFile:
+        return jsonify(error=422, text="Unable to process the file"), 422
 
 
 @app.route("/", methods=["GET"])
