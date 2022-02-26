@@ -26,4 +26,4 @@ jobs:
         pip install poetry
         poetry install
         pip install pytest
-        pytest test
+        poetry run pytest test
