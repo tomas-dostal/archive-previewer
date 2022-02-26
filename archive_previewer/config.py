@@ -12,6 +12,8 @@ class Config(object):
     JSON_SORT_KEYS = False
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+    MAX_CONTENT_LENGTH = 1024 * 1024
+    UPLOAD_EXTENSIONS = [".zip"]
 
 
 class ProductionConfig(Config):

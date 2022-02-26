@@ -2,6 +2,8 @@ import os
 from zipfile import ZipFile, BadZipFile
 
 from flask import request, jsonify, Flask
+
+import archive_previewer.config
 from archive_previewer.database import db
 from archive_previewer.models import Archive, File
 from archive_previewer.schema import ArchiveSchema
@@ -24,7 +26,24 @@ def upload_file():
     if len(request.files) > 1:
         return jsonify(error=400, text="Multiple files attached. Please send separately"), 400
 
+    # it might be useful to store files directly to the local drive and write the by chunks,
+    # especially if file is large. Currently file size is limited to 2MB
+
     file = next(iter(request.files.listvalues()))[0]
+
+    if file.filename != "":
+        file_ext = os.path.splitext(file.filename)[1]
+        if file_ext not in app.config["UPLOAD_EXTENSIONS"]:
+            return (
+                jsonify(
+                    error=400,
+                    text="Invalid format. Allowed formats: {allowed}".format(
+                        allowed=archive_previewer.config.Config.UPLOAD_EXTENSIONS
+                    ),
+                ),
+                400,
+            )
+
     archive = Archive(name=file.filename)
     try:
         with ZipFile(file=file) as zip:
@@ -41,7 +60,7 @@ def upload_file():
 
 @app.route("/", methods=["GET"])
 def list_all_files():
-    return jsonify(Archive.query.all())
+    return jsonify(ArchiveSchema().dump(Archive.query.all(), many=True))
 
 
 @app.route("/archive/<archive_id>", methods=["GET"])
