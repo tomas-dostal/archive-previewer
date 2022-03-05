@@ -1,8 +1,7 @@
 import io
 import unittest
 from pathlib import Path
-
-from archive_previewer.app import app
+import app
 
 
 class BasicTest(unittest.TestCase):

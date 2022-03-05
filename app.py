@@ -3,20 +3,26 @@ from zipfile import ZipFile, BadZipFile
 
 from flask import request, jsonify, Flask
 
-import archive_previewer.config
-from archive_previewer.database import db
-from archive_previewer.models import Archive, File
-from archive_previewer.schema import ArchiveSchema
-
-UPLOAD_FOLDER = os.path.dirname(os.path.realpath(__file__))
-ALLOWED_EXTENSIONS = set("zip")
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL", "sqlite:///" + os.path.join(basedir, "data.sqlite"))
+import config
+from database import db
+from models import Archive, File
+from schema import ArchiveSchema
 
 app = Flask(__name__)
-app.config.from_object("archive_previewer.config.DevelopmentConfig")  # os.environ.get('FLASK_ENV') or
 db.init_app(app)
+app.config.from_object("config.ProductionConfig")
+# app.run()
+db.create_all()
+
+
+# return application
+
+# def application():
+
+
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 
 @app.route("/", methods=["POST"])
@@ -33,13 +39,11 @@ def upload_file():
 
     if file.filename != "":
         file_ext = os.path.splitext(file.filename)[1]
-        if file_ext not in app.config["UPLOAD_EXTENSIONS"]:
+        if file_ext not in application.config["UPLOAD_EXTENSIONS"]:
             return (
                 jsonify(
                     error=400,
-                    text="Invalid format. Allowed formats: {allowed}".format(
-                        allowed=archive_previewer.config.Config.UPLOAD_EXTENSIONS
-                    ),
+                    text="Invalid format. Allowed formats: {allowed}".format(allowed=config.Config.UPLOAD_EXTENSIONS),
                 ),
                 400,
             )
@@ -70,12 +74,4 @@ def get_page(archive_id):
         return jsonify(error=404, text="Archive not found"), 404
     return jsonify(result)
 
-
-if __name__ == "__main__":
-    db.create_all()
-    app.run()
-
-
-@app.before_first_request
-def create_tables():
-    db.create_all()
+# if __name__ == "__main__":

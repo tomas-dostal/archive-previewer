@@ -1,10 +1,43 @@
 # Archive previewer
 
-The task is to implement an "Archive previewer" HTTP JSON API in python using [flask](https://flask.palletsprojects.com/en/2.0.x/) web framework. That API accepts a ZIP file, processes it on the server, and returns results of processing (list of files inside with their sizes) to the user in JSON format. All processing results are saved to the SQLite database. Repository with the project should be hosted on the https://github.com/ and Github Actions should be used for checking code style with [pylint](https://www.pylint.org/) and running tests.
+## Installation
+
+1) Clone this repository
+2) Build a docker image `docker build -t archive-previewer . `
+3) Run ` docker run archive-previewer `
+
+Application is dockerized. Using Nginx for routing to the flask app.
+
+## Possible improvenemts
+
+As this is just a demo, there are several things that should be modified before going to the production, for example
+
+- large file handling support (it would be useful to store uploaded data on drive instead of RAM, writing it by chunks,
+  so the app does not run out of memory)
+- https support for nginx
+- non-one-file database (as the task requested, I used sqlite, however it might be worth considering for example
+  postgres with some persistent volume)
+- more complex tests (currently the tests are covering just a few basic scenarios)
+- better structure of the code (since this is a small app, it's okay-ish. However, some abstraction over database might
+  be good to consider)
+
+## Task detail
+
+Credit: [kumekay](https://github.com/kumekay)
+
+The task is to implement an "Archive previewer" HTTP JSON API in python
+using [flask](https://flask.palletsprojects.com/en/2.0.x/) web framework. That API accepts a ZIP file, processes it on
+the server, and returns results of processing (list of files inside with their sizes) to the user in JSON format. All
+processing results are saved to the SQLite database. Repository with the project should be hosted on
+the https://github.com/ and Github Actions should be used for checking code style with [pylint](https://www.pylint.org/)
+and running tests.
 
 ## API Description
 
-The API should accept 2 requests. One request to upload a file and see its uploading results and the second one to see all previously uploaded files. Every uploaded file should be processed only once (and then discarded), data about the file should be saved to an SQLite database. [SQLAlchemy](https://www.sqlalchemy.org/) should be used as an ORM for accessing data.
+The API should accept 2 requests. One request to upload a file and see its uploading results and the second one to see
+all previously uploaded files. Every uploaded file should be processed only once (and then discarded), data about the
+file should be saved to an SQLite database. [SQLAlchemy](https://www.sqlalchemy.org/) should be used as an ORM for
+accessing data.
 
 1. `GET /`
    This endpoint returns a list of all files that were previously uploaded to the service.
