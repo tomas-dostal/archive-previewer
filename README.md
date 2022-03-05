@@ -1,5 +1,12 @@
 # Archive previewer
 
+## Installation 
+
+1) Clone the repository 
+2) Download and install poetry `curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python`
+3) Install dependencies `poetry install` 
+4) Run `poetry run flask run --port 8000`
+
 The task is to implement an "Archive previewer" HTTP JSON API in python using [flask](https://flask.palletsprojects.com/en/2.0.x/) web framework. That API accepts a ZIP file, processes it on the server, and returns results of processing (list of files inside with their sizes) to the user in JSON format. All processing results are saved to the SQLite database. Repository with the project should be hosted on the https://github.com/ and Github Actions should be used for checking code style with [pylint](https://www.pylint.org/) and running tests.
 
 ## API Description
